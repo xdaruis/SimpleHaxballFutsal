@@ -74,8 +74,15 @@ HaxballJS.then((HBInit) => {
     handlePlayerActivity(player.id);
   }
 
+  let tickCounter = 0;
   room.onGameTick = function (): void {
-    if (!debuggingMode) checkAndHandleInactivePlayers();
+    if (!debuggingMode) {
+      ++tickCounter;
+      if (tickCounter >= 60) {
+        checkAndHandleInactivePlayers();
+        tickCounter = 0;
+      }
+    }
   }
 
   room.onPlayerChat = function (player: PlayerObject, message: string): boolean {
