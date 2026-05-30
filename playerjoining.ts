@@ -9,9 +9,9 @@ export function handlePlayerJoining(player: PlayerObject): void {
     if (checkAndHandleBadWords(player, playerName)) return;
     if (isPlayerAlreadyConnected(player, player.conn)) return;
     if (adminAuthList.has(player.auth)) room.setPlayerAdmin(playerId, true);
-    room.sendAnnouncement(`👋 Bem-vindo, ${playerName}.`, playerId, 0x00FF00, "bold", 0);
+    room.sendAnnouncement(`👋 Welcome, ${playerName}.`, playerId, 0x00FF00, "bold", 0);
     specPlayerIdList.push(playerId);
-    console.log(`>>> ${playerName} entrou na sala.`);
+    console.log(`>>> ${playerName} enter.`);
     checkAndRestartWithNewMode(playerList);
 }
 
@@ -25,8 +25,8 @@ function checkAndRestartWithNewMode(playerList: PlayerObject[]): void {
 function isPlayerAlreadyConnected(player: PlayerObject, conn: string): boolean {
     const playerId = player.id;
     if (!debuggingMode && [...playerConnStrings.values()].some(value => value === conn)) {
-        room.kickPlayer(playerId, "Já estás conectado à sala", false);
-        console.warn(`>>> ${player.name} foi expulso. Razão: conectar-se duas vezes com o mesmo IP.`);
+        room.kickPlayer(playerId, "Already connected", false);
+        console.warn(`>>> ${player.name} kick. Reason: double connect.`);
         return true;
     }
     playerConnStrings.set(playerId, conn);
