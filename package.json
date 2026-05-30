@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc",
     "start": "tsx index.ts",
-    "start:bun": "bun index.ts"
+    "start:bun": "bun index.ts",
+    "start:prod": "pnpm build && bun dist/index.js"
   },
   "keywords": [
     "haxball",

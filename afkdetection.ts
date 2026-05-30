@@ -1,4 +1,5 @@
-import { room, specPlayerIdList } from "./index.js";
+import { room } from "./index.js";
+import { isSpec } from "./roster.js";
 
 const lastPlayerActivityTimestamp = new Map<number, number>();
 const hasPlayerBeenWarnedToMove = new Set<number>();
@@ -8,23 +9,24 @@ export function setLastPlayerActivityTimestamp(playerId: number) {
 }
 
 export function handlePlayerActivity(playerId: number) {
-    if (!specPlayerIdList.includes(playerId)) {
+    if (!isSpec(playerId)) {
         setLastPlayerActivityTimestamp(playerId);
         hasPlayerBeenWarnedToMove.delete(playerId);
     }
 }
 
 export function checkAndHandleInactivePlayers() {
-    for (const [playerId, timestamp] of Array.from(lastPlayerActivityTimestamp.entries())) {
-        if (Date.now() - timestamp >= 5000 && !hasPlayerBeenWarnedToMove.has(playerId)) {
+    const now = Date.now();
+    for (const [playerId, timestamp] of lastPlayerActivityTimestamp) {
+        if (now - timestamp >= 5000 && !hasPlayerBeenWarnedToMove.has(playerId)) {
             room.sendAnnouncement(`❗️ ${room.getPlayer(playerId).name}, move or kick!`, playerId, 0xFF0000, "bold", 2);
             hasPlayerBeenWarnedToMove.add(playerId);
         }
-        if (Date.now() - timestamp >= 10000) room.kickPlayer(playerId, "AFK", false);
+        if (now - timestamp >= 10000) room.kickPlayer(playerId, "AFK", false);
     }
 }
 
 export function removePlayerFromAfkMapsAndSets(playerId: number): void {
     lastPlayerActivityTimestamp.delete(playerId);
-    hasPlayerBeenWarnedToMove.delete(playerId)
+    hasPlayerBeenWarnedToMove.delete(playerId);
 }

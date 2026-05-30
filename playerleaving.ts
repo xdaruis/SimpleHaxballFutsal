@@ -1,32 +1,41 @@
 import { removePlayerFromAfkMapsAndSets } from "./afkdetection.js";
-import { specPlayerIdList, playerConnStrings, redPlayerIdList, bluePlayerIdList, room, pauseUnpauseGame, restartGameWithCallback } from "./index.js";
-import { movePlayerToTeam, moveLastOppositeTeamMemberToSpec } from "./teammanagement.js";
+import { playerConnStrings, activeConnStrings, room, pauseUnpauseGame, restartGameWithCallback } from "./index.js";
+import {
+    movePlayerToTeam,
+    moveLastOppositeTeamMemberToSpec,
+    getTeam,
+    removeFromRoster,
+    firstSpec,
+    specCount,
+    type Team,
+} from "./roster.js";
 
 export function handlePlayerLeaving(player: PlayerObject): void {
     const playerId: number = player.id;
-    let playerIdList: number[] = [];
+    const team = getTeam(playerId);
     const playerList = room.getPlayerList();
-    if (redPlayerIdList.includes(playerId) || bluePlayerIdList.includes(playerId)) {
-        playerIdList = redPlayerIdList.includes(playerId) ? redPlayerIdList : bluePlayerIdList;
-        if (playerList.length !== 0) handleTeamPlayerLeaving(playerIdList, playerList);
-    } else {
-        playerIdList = specPlayerIdList;
+
+    if (team === "red" || team === "blue") {
+        if (playerList.length !== 0) handleTeamPlayerLeaving(team, playerList);
     }
-    playerIdList.splice(playerIdList.indexOf(playerId), 1);
+
+    const conn = playerConnStrings.get(playerId);
+    if (conn !== undefined) activeConnStrings.delete(conn);
+    removeFromRoster(playerId);
     removePlayerFromAfkMapsAndSets(playerId);
     playerConnStrings.delete(playerId);
     if (playerList.length === 0) room.stopGame();
     console.log(`>>> ${player.name} leave.`);
 }
 
-function handleTeamPlayerLeaving(teamPlayerIdList: number[], playerList: PlayerObject[]) {
-    const oppositeTeamPlayerIdList: number[] = teamPlayerIdList === redPlayerIdList ? bluePlayerIdList : redPlayerIdList;
+function handleTeamPlayerLeaving(leavingTeam: Team, playerList: PlayerObject[]) {
+    const oppositeTeam: Team = leavingTeam === "red" ? "blue" : "red";
     if (playerList.length === 1) {
-        restartGameWithCallback(() => movePlayerToTeam(playerList[0]!.id, redPlayerIdList));
-    } else if (specPlayerIdList.length === 0) {
-        restartGameWithCallback(() => moveLastOppositeTeamMemberToSpec(oppositeTeamPlayerIdList));
+        restartGameWithCallback(() => movePlayerToTeam(playerList[0]!.id, "red"));
+    } else if (specCount() === 0) {
+        restartGameWithCallback(() => moveLastOppositeTeamMemberToSpec(oppositeTeam));
     } else {
-        movePlayerToTeam(specPlayerIdList[0]!, teamPlayerIdList);
+        movePlayerToTeam(firstSpec()!, leavingTeam);
         pauseUnpauseGame();
     }
 }

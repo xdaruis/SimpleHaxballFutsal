@@ -3,27 +3,28 @@ import * as fs from "fs";
 import { handlePlayerActivity, checkAndHandleInactivePlayers } from "./afkdetection.js";
 import { handlePlayerJoining } from "./playerjoining.js";
 import { handlePlayerLeaving } from "./playerleaving.js";
-import { handleTeamWin } from "./teammanagement.js";
+import { handleTeamWin, type Team } from "./teammanagement.js";
 import { checkAndHandleSpam } from "./moderation.js";
 import { checkAndHandleCommands } from "./commands.js";
+import { initRoster } from "./roster.js";
 
 export const debuggingMode = false;
 const scoreLimit: number = 3;
 const timeLimit: number = 3;
 
 export const playerConnStrings = new Map<number, string>();
+export const activeConnStrings = new Set<string>();
 export const adminAuthList: Set<string> = new Set(fs.readFileSync("lists/adminlist.txt", "utf8").split("\n").map((line: string) => line.trim()));
-export const badWordList: Set<string> = new Set(fs.readFileSync("lists/badwords.txt", "utf8").split("\n").map((line: string) => line.trim()));
 const tokenFile: string = fs.readFileSync("token.txt", "utf8");
 const practiceStadium: string = fs.readFileSync("stadiums/practice.hbs", "utf8");
 const stadium2x2: string = fs.readFileSync("stadiums/futsal2x2.hbs", "utf8");
 const stadium3x3: string = fs.readFileSync("stadiums/futsal3x3.hbs", "utf8");
 
-export let specPlayerIdList: number[] = [];
-export let redPlayerIdList: number[] = [];
-export let bluePlayerIdList: number[] = [];
-
 export let room: RoomObject;
+
+function teamIdToTeam(teamId: number): Team {
+  return teamId === 1 ? "red" : "blue";
+}
 
 HaxballJS.then((HBInit) => {
   room = HBInit({
@@ -38,6 +39,7 @@ HaxballJS.then((HBInit) => {
     },
     token: tokenFile, //https://haxball.com/headlesstoken
   });
+  initRoster(room);
 
   room.setScoreLimit(scoreLimit);
   room.setTimeLimit(timeLimit);
@@ -59,15 +61,15 @@ HaxballJS.then((HBInit) => {
   room.onTeamGoal = function (teamId: number) {
     const scores = room.getScores();
     const teamScore = teamId === 1 ? scores.red : scores.blue;
-    const teamPlayerIdList = teamId === 1 ? redPlayerIdList : bluePlayerIdList;
-    if (teamScore === scoreLimit || scores.time > timeLimit * 60) restartGameWithCallback(() => handleTeamWin(teamPlayerIdList));
+    const winningTeam = teamIdToTeam(teamId);
+    if (teamScore === scoreLimit || scores.time > timeLimit * 60) restartGameWithCallback(() => handleTeamWin(winningTeam));
   }
 
   //triggers *only* when a team is winning and the timer runs out, 
   //because the room is also listening for the onTeamGoal event, which triggers first
   room.onTeamVictory = function (scores: ScoresObject): void {
-    const teamPlayerIdList = scores.red > scores.blue ? redPlayerIdList : bluePlayerIdList;
-    restartGameWithCallback(() => handleTeamWin(teamPlayerIdList));
+    const winningTeam: Team = scores.red > scores.blue ? "red" : "blue";
+    restartGameWithCallback(() => handleTeamWin(winningTeam));
   }
 
   room.onPlayerActivity = function (player: PlayerObject): void {

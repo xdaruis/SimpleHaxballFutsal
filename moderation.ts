@@ -1,5 +1,5 @@
 import { isCommand } from "./commands.js";
-import { badWordList, room } from "./index.js";
+import { room } from "./index.js";
 
 const playerConsecutiveMessages = new Map<number, string[]>();
 const playerMessageTimestamps = new Map<number, number[]>();
@@ -38,30 +38,4 @@ function is3rdConsecutiveMessage(playerId: number, message: string): boolean {
         playerConsecutiveMessages.set(playerId, [message]);
     }
     return false;
-}
-
-export function checkAndHandleBadWords(player: PlayerObject, string: string): boolean {
-    if (containsBadWords(string)) {
-        room.kickPlayer(player.id, "Bad words", true);
-        console.warn(`>>> ${player.name} ban. Reason: bad words. (${string})`);
-        return true;
-    }
-    return false;
-}
-
-function containsBadWords(message: string): boolean {
-    return Array.from(badWordList).some((word: string) => removeNumbersAndDiacritics(message).toLowerCase().includes(word));
-}
-
-function removeNumbersAndDiacritics(message: string): string {
-    message = message.normalize("NFD").replace(/\p{Diacritic}/gu, "");
-    const replacements: { [key: string]: string } = {
-        "0": "o",
-        "1": "i",
-        "3": "e",
-        "4": "a",
-        "5": "s",
-        "7": "t",
-    };
-    return message.replace(/[013457]/g, m => replacements[m]!);
 }
