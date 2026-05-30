@@ -4,7 +4,7 @@ import { handlePlayerActivity, checkAndHandleInactivePlayers } from "./afkdetect
 import { handlePlayerJoining } from "./playerjoining.js";
 import { handlePlayerLeaving } from "./playerleaving.js";
 import { handleTeamWin } from "./teammanagement.js";
-import { checkAndHandleBadWords, checkAndHandleSpam } from "./moderation.js";
+import { checkAndHandleSpam } from "./moderation.js";
 import { checkAndHandleCommands } from "./commands.js";
 
 export const debuggingMode = false;
@@ -87,7 +87,7 @@ HaxballJS.then((HBInit) => {
 
   room.onPlayerChat = function (player: PlayerObject, message: string): boolean {
     console.log(`${player.name}: ${message}`);
-    return !checkAndHandleCommands(player, message) && !checkAndHandleBadWords(player, message) && !checkAndHandleSpam(player, message);
+    return !checkAndHandleCommands(player, message) && !checkAndHandleSpam(player, message);
   }
 });
 
