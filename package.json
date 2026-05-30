@@ -6,7 +6,8 @@
   "packageManager": "pnpm@10.12.1",
   "scripts": {
     "build": "tsc",
-    "start": "tsx index.ts"
+    "start": "tsx index.ts",
+    "start:bun": "bun index.ts"
   },
   "keywords": [
     "haxball",
