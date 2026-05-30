@@ -15,7 +15,7 @@ export function handlePlayerActivity(playerId: number) {
 }
 
 export function checkAndHandleInactivePlayers() {
-    for (let [playerId, timestamp] of lastPlayerActivityTimestamp.entries()) {
+    for (const [playerId, timestamp] of Array.from(lastPlayerActivityTimestamp.entries())) {
         if (Date.now() - timestamp >= 5000 && !hasPlayerBeenWarnedToMove.has(playerId)) {
             room.sendAnnouncement(`❗️ ${room.getPlayer(playerId).name}, move or kick!`, playerId, 0xFF0000, "bold", 2);
             hasPlayerBeenWarnedToMove.add(playerId);
