@@ -27,7 +27,7 @@ export let room: RoomObject;
 
 HaxballJS.then((HBInit) => {
   room = HBInit({
-    roomName: "daruis FUTSAL 1x1 2x2 3x3",
+    roomName: "🇷🇴 ⚽ 𝐃𝐀𝐑𝐔𝐈𝐒 𝐅𝐔𝐓𝐒𝐀𝐋 24/7 | 1v1·2v2·3v3 | RO LOW PING",
     maxPlayers: 16,
     public: !debuggingMode,
     noPlayer: true,
