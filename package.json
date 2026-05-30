@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "Simple 1x1/2x2/3x3 futsal script for Haxball Headless Host (and for deploying with haxball.js).",
   "main": "index.ts",
+  "packageManager": "pnpm@10.12.1",
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsc",
     "start": "tsx index.ts"
   },
   "keywords": [
@@ -15,6 +16,9 @@
   "author": "DazzDev",
   "license": "MIT",
   "type": "module",
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "node-datachannel"]
+  },
   "dependencies": {
     "haxball.js": "^2.1.2"
   },
