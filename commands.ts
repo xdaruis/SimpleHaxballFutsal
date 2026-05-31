@@ -1,4 +1,5 @@
 import { room } from "./index.js";
+import { togglePracticeWalls, getPracticeStadium } from "./practice.js";
 
 interface Command {
     name: string;
@@ -38,6 +39,22 @@ const commands: Command[] = [
         response: (player: PlayerObject) => {
             room.kickPlayer(player.id, "Command !bb", false);
         }
+    },
+    {
+        name: "walls",
+        description: "toggle practice goal walls on/off",
+        emoji: "🧱",
+        adminOnly: true,
+        response: (player: PlayerObject) => {
+            const wallsOn = togglePracticeWalls();
+            if (room.getPlayerList().length === 1) {
+                room.stopGame();
+                room.setCustomStadium(getPracticeStadium());
+                room.startGame();
+            }
+            const label = wallsOn ? "ON (practice+wals)" : "OFF (practice)";
+            room.sendAnnouncement(`🧱 Practice walls ${label}.`, player.id, 0xFFFF00, "bold", 0);
+        }
     }
 ];
 
@@ -47,6 +64,10 @@ export function checkAndHandleCommands(player: PlayerObject, message: string): b
     const command = commands.find((command) => command.name === commandMessage);
     if (!command) {
         room.sendAnnouncement("🚫 Command no exist. Type !help.", player.id, 0xFF0000, "bold", 0);
+        return true;
+    }
+    if (command.adminOnly && !player.admin) {
+        room.sendAnnouncement("🚫 Admin only.", player.id, 0xFF0000, "bold", 0);
         return true;
     }
     command.response(player);

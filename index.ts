@@ -7,6 +7,7 @@ import { handleTeamWin, type Team } from "./teammanagement.js";
 import { checkAndHandleSpam } from "./moderation.js";
 import { checkAndHandleCommands } from "./commands.js";
 import { initRoster } from "./roster.js";
+import { getPracticeStadium } from "./practice.js";
 
 export const debuggingMode = false;
 const scoreLimit: number = 3;
@@ -16,7 +17,6 @@ export const playerConnStrings = new Map<number, string>();
 export const activeConnStrings = new Set<string>();
 export const adminAuthList: Set<string> = new Set(fs.readFileSync("lists/adminlist.txt", "utf8").split("\n").map((line: string) => line.trim()));
 const tokenFile: string = fs.readFileSync("token.txt", "utf8");
-const practiceStadium: string = fs.readFileSync("stadiums/practice.hbs", "utf8");
 const stadium1x1: string = fs.readFileSync("stadiums/futsal1x1.hbs", "utf8");
 const stadium2x2: string = fs.readFileSync("stadiums/futsal2x2.hbs", "utf8");
 const stadium3x3: string = fs.readFileSync("stadiums/futsal3x3.hbs", "utf8");
@@ -45,7 +45,7 @@ HaxballJS.then((HBInit) => {
   room.setScoreLimit(scoreLimit);
   room.setTimeLimit(timeLimit);
   room.setTeamsLock(true);
-  room.setCustomStadium(practiceStadium);
+  room.setCustomStadium(getPracticeStadium());
 
   room.onRoomLink = function (url: string) {
     console.log(url);
@@ -106,7 +106,7 @@ export function restartGameWithCallback(callback: () => void): void {
 function setAppropriateStadium() {
   const playerListLength = room.getPlayerList().length;
   if (playerListLength === 1) {
-    room.setCustomStadium(practiceStadium);
+    room.setCustomStadium(getPracticeStadium());
   } else if (playerListLength <= 3) {
     room.setCustomStadium(stadium1x1);
   } else if (playerListLength >= 6) {
