@@ -7,7 +7,7 @@ export function handlePlayerJoining(player: PlayerObject): void {
     const playerList: PlayerObject[] = room.getPlayerList();
     if (isPlayerAlreadyConnected(player, player.conn)) return;
     if (adminAuthList.has(player.auth)) room.setPlayerAdmin(playerId, true);
-    room.sendAnnouncement(`👋 Welcome, ${playerName}.`, playerId, 0x00FF00, "bold", 0);
+    room.sendAnnouncement(`👋 Welcome ${playerName}!`, playerId, 0x00FF00, "bold", 0);
     addSpec(playerId);
     console.log(`>>> ${playerName} enter.`);
     checkAndRestartWithNewMode(playerList);

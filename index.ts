@@ -8,6 +8,7 @@ import { checkAndHandleSpam } from "./moderation.js";
 import { checkAndHandleCommands } from "./commands.js";
 import { initRoster } from "./roster.js";
 import { getPracticeStadium } from "./practice.js";
+import { setCustomStadiumWithTeamColors } from "./teamcolors.js";
 
 export const debuggingMode = false;
 const scoreLimit: number = 3;
@@ -45,7 +46,7 @@ HaxballJS.then((HBInit) => {
   room.setScoreLimit(scoreLimit);
   room.setTimeLimit(timeLimit);
   room.setTeamsLock(true);
-  room.setCustomStadium(getPracticeStadium());
+  setCustomStadiumWithTeamColors(room, getPracticeStadium());
 
   room.onRoomLink = function (url: string) {
     console.log(url);
@@ -106,13 +107,13 @@ export function restartGameWithCallback(callback: () => void): void {
 function setAppropriateStadium() {
   const playerListLength = room.getPlayerList().length;
   if (playerListLength === 1) {
-    room.setCustomStadium(getPracticeStadium());
+    setCustomStadiumWithTeamColors(room, getPracticeStadium());
   } else if (playerListLength <= 3) {
-    room.setCustomStadium(stadium1x1);
+    setCustomStadiumWithTeamColors(room, stadium1x1);
   } else if (playerListLength >= 6) {
-    room.setCustomStadium(stadium3x3);
+    setCustomStadiumWithTeamColors(room, stadium3x3);
   } else {
-    room.setCustomStadium(stadium2x2);
+    setCustomStadiumWithTeamColors(room, stadium2x2);
   }
 }
 

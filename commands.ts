@@ -1,5 +1,6 @@
 import { room } from "./index.js";
 import { togglePracticeWalls, getPracticeStadium } from "./practice.js";
+import { setCustomStadiumWithTeamColors } from "./teamcolors.js";
 
 interface Command {
     name: string;
@@ -49,7 +50,7 @@ const commands: Command[] = [
             const wallsOn = togglePracticeWalls();
             if (room.getPlayerList().length === 1) {
                 room.stopGame();
-                room.setCustomStadium(getPracticeStadium());
+                setCustomStadiumWithTeamColors(room, getPracticeStadium());
                 room.startGame();
             }
             const label = wallsOn ? "ON (practice+walls)" : "OFF (practice)";
