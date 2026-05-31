@@ -16,6 +16,8 @@ export function handlePlayerActivity(playerId: number) {
 }
 
 export function checkAndHandleInactivePlayers() {
+    if (room.getPlayerList().length <= 2) return;
+
     const now = Date.now();
     for (const [playerId, timestamp] of lastPlayerActivityTimestamp) {
         if (now - timestamp >= 5000 && !hasPlayerBeenWarnedToMove.has(playerId)) {
