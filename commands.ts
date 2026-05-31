@@ -52,7 +52,7 @@ const commands: Command[] = [
                 room.setCustomStadium(getPracticeStadium());
                 room.startGame();
             }
-            const label = wallsOn ? "ON (practice+wals)" : "OFF (practice)";
+            const label = wallsOn ? "ON (practice+walls)" : "OFF (practice)";
             room.sendAnnouncement(`🧱 Practice walls ${label}.`, player.id, 0xFFFF00, "bold", 0);
         }
     }
