@@ -29,7 +29,7 @@ function teamIdToTeam(teamId: number): Team {
 
 HaxballJS.then((HBInit) => {
   room = HBInit({
-    roomName: "▶ 𝐑𝐎 🇷🇴 𝐃𝐀𝐑𝐔𝐈𝐒 𝐅𝐔𝐓𝐒𝐀𝐋 ◀ 𝟑𝐱𝟑",
+    roomName: "▶ 𝐃𝐀𝐑𝐔𝐈𝐒 𝐅𝐔𝐓𝐒𝐀𝐋 3x3 BOT ◀",
     maxPlayers: 16,
     public: !debuggingMode,
     noPlayer: true,
@@ -38,7 +38,7 @@ HaxballJS.then((HBInit) => {
       lat: 45.75372,
       lon: 21.22571
     },
-    token: tokenFile, //https://haxball.com/headlesstoken
+    token: tokenFile, // https://haxball.com/headlesstoken
   });
   initRoster(room);
 
