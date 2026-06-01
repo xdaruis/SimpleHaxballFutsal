@@ -46,6 +46,7 @@ HaxballJS.then((HBInit) => {
   room.setScoreLimit(scoreLimit);
   room.setTimeLimit(timeLimit);
   room.setTeamsLock(true);
+  room.setRequireRecaptcha(true);
   setCustomStadiumWithTeamColors(room, getPracticeStadium());
 
   room.onRoomLink = function (url: string) {
